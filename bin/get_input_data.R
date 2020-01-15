@@ -75,6 +75,7 @@ opt = wsc_parse_args(option_list, mandatory = c("reference_mat_url", "reference_
                                                  "reference_metadata", "marker_genes_file"))
 
 urls = unlist(opt[1:8])
+# standard file names
 names = c(rep(c("matrix.mtx", "barcodes.tsv",  "genes.tsv"), 2), "ref_metadata.txt", "ref_marker_genes.txt")
 # set up directories
 ref_dir = "reference_10X_dir/"
@@ -83,12 +84,18 @@ dir.create(ref_dir)
 dir.create(query_dir)
 
 for(idx in 1:length(names)){
-    if(idx <=3) d = paste0("reference_10X_dir/", names[idx], sep = "")
-    else if(idx <=6) d = paste0("query_10X_dir/", names[idx], sep = "")
+    if(idx <=3) d = paste0(ref_dir, names[idx], sep = "")
+    else if(idx <=6) d = paste0(query_dir, names[idx], sep = "")
     else d = names[idx]
-    # download file
+
+    zipped = FALSE
+    if(endsWith(urls[idx], ".gz")){ 
+        d = paste0(d, ".gz", sep="")
+        zipped = TRUE
+    }
+
     download.file(url = urls[idx], destfile=d)
+    if(!file.exists(d)) stop(paste0("Failed to download file: ", d, sep=""))
     # gunzip, if necessary
-    if(summary(file(d))$class == "gzfile") gunzip(d)
-    if(!file.exists(d)) stop(paste0("file failed to download: ", d, sep=""))
+    if(zipped) gunzip(d, overwrite = TRUE, remove = TRUE)
 }
