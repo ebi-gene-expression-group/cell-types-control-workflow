@@ -13,89 +13,106 @@ suppressPackageStartupMessages(require(R.utils))
 
 option_list = list(
     make_option(
-        c("-a", "--reference-mat-url"),
+        c("-t", "--data-type"),
         action = "store",
         default = NA,
         type = 'character',
-        help = ""
+        help = "Type of dataset being downloaded (must be 'query' or 'reference')"
     ),
     make_option(
-        c("-b", "--reference-barcodes-url"),
+        c("-a", "--mat-url"),
         action = "store",
         default = NA,
         type = 'character',
-        help = ""
+        help = "Link to download reference expression matrix in .mtx format"
     ),
     make_option(
-        c("-c", "--reference-genes-url"),
+        c("-b", "--barcodes-url"),
         action = "store",
         default = NA,
         type = 'character',
-        help = ""
+        help = "Link to download reference barcodes file in .tsv format"
     ),
     make_option(
-        c("-d", "--query-matrix-url"),
+        c("-c", "--genes-url"),
         action = "store",
         default = NA,
         type = 'character',
-        help = ""
+        help = "Link to download reference genes file in .tsv format"
     ),
     make_option(
-        c("-e", "--query-barcodes-url"),
+        c("-g", "--ref-metadata"),
         action = "store",
         default = NA,
         type = 'character',
-        help = ""
-    ),
-    make_option(
-        c("-f", "--query-genes-url"),
-        action = "store",
-        default = NA,
-        type = 'character',
-        help = ""
-    ),
-    make_option(
-        c("-g", "--reference-metadata"),
-        action = "store",
-        default = NA,
-        type = 'character',
-        help = ""
+        help = "Link to reference metadata file in text format. Must be provided if data-type is 'reference'"
     ),
     make_option(
         c("-i", "--marker-genes-file"),
         action = "store",
         default = NA,
         type = 'character',
-        help = ""
+        help = "Link to reference marker genes file in .tsv format. Must be provided if data-type is 'reference'"
+    ),
+    make_option(
+        c("-j", "--output-10x-dir"),
+        action = "store",
+        default = NA,
+        type = 'character',
+        help = "Output path for reference 10X directory"
+    ), 
+    make_option(
+        c("-k", "--ref-metadata-path"),
+        action = "store",
+        default = "ref_metadata.txt",
+        type = 'character',
+        help = "Output path for reference metadata file in text format"
+    ),
+    make_option(
+        c("-l", "--markers-path"),
+        action = "store",
+        default = "ref_marker_genes.txt",
+        type = 'character',
+        help = "Output path for marker gene table in text format"
     )
 )
 
-opt = wsc_parse_args(option_list, mandatory = c("reference_mat_url", "reference_barcodes_url", "reference_genes_url",
-                                                 "query_matrix_url", "query_barcodes_url", "query_genes_url",
-                                                 "reference_metadata", "marker_genes_file"))
+opt = wsc_parse_args(option_list, mandatory = c("data_type", "output_10x_dir", 
+                                                "mat_url", "barcodes_url", "genes_url"))
 
-urls = unlist(opt[1:8])
-# standard file names
-names = c(rep(c("matrix.mtx", "barcodes.tsv",  "genes.tsv"), 2), "ref_metadata.txt", "ref_marker_genes.txt")
-# set up directories
-ref_dir = "reference_10X_dir/"
-query_dir = "query_10X_dir/"
-dir.create(ref_dir)
-dir.create(query_dir)
+out_dir = opt$output_10x_dir
+dir.create(out_dir)
+data_type = opt$data_type
+# standard 10x direcoty structure 
+std_10x_files = c("matrix.mtx", "barcodes.tsv",  "genes.tsv")
 
-for(idx in 1:length(names)){
-    if(idx <=3) d = paste0(ref_dir, names[idx], sep = "")
-    else if(idx <=6) d = paste0(query_dir, names[idx], sep = "")
-    else d = names[idx]
+# stage urls and file names for downloading
+if(data_type == "query"){
+    urls = c(opt$mat_url, opt$barcodes_url, opt$genes_url)
+    dest = paste(out_dir, std_10x_files, sep="/")
+} else if(data_type == "reference") {
+    if(is.na(opt$marker_genes_file) | is.na(opt$ref_metadata)){ 
+        stop("Necessary arguments not provided. Run get_input_data.R --help to see documentation")
+    }
+    urls = c(opt$mat_url, opt$barcodes_url, opt$genes_url, opt$ref_metadata, opt$marker_genes_file)
+    dest = c(paste(out_dir, std_10x_files, sep="/"), opt$ref_metadata_path, opt$markers_path)
+} else {
+    stop(paste("Incorrect data type provided", data_type))
+}
 
+# download data
+for(idx in 1:length(urls)){
+    url = urls[idx]
+    d = dest[idx]
+    # manage archived files
     zipped = FALSE
-    if(endsWith(urls[idx], ".gz")){ 
+    if(endsWith(url, ".gz")){ 
         d = paste0(d, ".gz", sep="")
         zipped = TRUE
     }
 
-    download.file(url = urls[idx], destfile=d)
-    if(!file.exists(d)) stop(paste0("Failed to download file: ", d, sep=""))
+    download.file(url = url, destfile=d)
+    if(!file.exists(d)) stop(paste0("Failed to download file:", d))
     # gunzip, if necessary
     if(zipped) gunzip(d, overwrite = TRUE, remove = TRUE)
 }
