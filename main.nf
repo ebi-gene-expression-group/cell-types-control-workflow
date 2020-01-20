@@ -49,7 +49,8 @@ process run_garnett_workflow {
     input:
         file(reference_10X_dir) from REFERENCE_10X_DIR
         file(query_10X_dir) from QUERY_10X_DIR
-        file(ref_metadata) from REFERENCE_METADATA
+        //file(ref_metadata) from REFERENCE_METADATA
+        file(ref_marker_genes) from REF_MARKER_GENES
 
     output:
          file("garnett_output.txt") into GARNETT_OUTPUT
@@ -62,21 +63,11 @@ process run_garnett_workflow {
     nextflow run $GARNETT_BASE_DIR/main.nf\
                         -work-dir $WORK_DIR/\$SUBDIR\
                         --results_dir \$RESULTS_DIR\
-
-
+                        --ref_10x_dir ${reference_10X_dir}\
+                        --query_10x_dir ${query_10X_dir}\
+                        --marker_genes ${ref_marker_genes}
     """
-
-
-
-
-
-
-
-
-
-
 } 
-
 
 // run scmap-cell 
 process run_scmap_cell_workflow {
