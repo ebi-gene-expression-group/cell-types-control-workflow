@@ -3,14 +3,6 @@
 // Meta-workflow that controls execution of steps in cell type 
 // prediction tools evaluation framework
 
-
-// TODO: should we add cross-validation indices generation??
-// TODO: add control statements on which tools need to be run ?
-
-
-// after input data are obtained, run individual workflows 
-
-
 // extract reference and query data
 if(params.data_download.run == "True"){
     process fetch_query_data{
@@ -66,7 +58,6 @@ if(params.garnett.run == "True"){
         input:
             file(reference_10X_dir) from REFERENCE_10X_DIR
             file(query_10X_dir) from QUERY_10X_DIR
-            //file(ref_metadata) from REFERENCE_METADATA
             file(ref_marker_genes) from REF_MARKER_GENES
 
         output:
@@ -106,7 +97,8 @@ if(params.scmap_cell.run == "True"){
         SUBDIR="scmap_cell"
         mkdir -p $WORK_DIR/\$SUBDIR     
 
-        nextflow run $SCMAP_BASE_DIR/main.nf\
+        nextflow run $SCMAP_GIT\
+                            -r $SCMAP_GIT_BRANCH\
                             -work-dir $WORK_DIR/\$SUBDIR\
                             --results_dir \$RESULTS_DIR\
                             --projection_method ${params.scmap_cell.projection_method}\
@@ -137,7 +129,8 @@ if(params.scmap_cluster.run == "True"){
         SUBDIR="scmap_clust"
         mkdir -p $WORK_DIR/\$SUBDIR 
 
-        nextflow run $SCMAP_BASE_DIR/main.nf\
+        nextflow run $SCMAP_GIT\
+                            -r $SCMAP_GIT_BRANCH\
                             -work-dir $WORK_DIR/\$SUBDIR\
                             --results_dir \$RESULTS_DIR\
                             --projection_method ${params.scmap_cluster.projection_method}
@@ -167,7 +160,8 @@ if(params.scpred.run == "True"){
         SUBDIR="scpred"
         mkdir -p $WORK_DIR/\$SUBDIR 
 
-        nextflow run $SCPRED_BASE_DIR/main.nf\
+        nextflow run $SCPRED_GIT\
+                            -r $SCPRED_GIT_BRANCH\
                             -work-dir $WORK_DIR/\$SUBDIR\
                             --results_dir \$RESULTS_DIR\
                             --method ${params.scpred.method}\
@@ -199,7 +193,8 @@ if(params.label_analysis.run == "True"){
         SUBDIR="label_analysis"
         mkdir -p $WORK_DIR/\$SUBDIR 
 
-        nextflow run $LABEL_ANALYSIS_BASE_DIR/main.nf\
+        nextflow run $LABEL_ANALYSIS_GIT\
+                            -r $LABEL_ANALYSIS_GIT_BRANCH\
                             -work-dir $WORK_DIR/\$SUBDIR\
                             --results_dir \$RESULTS_DIR\
                             --input_dir ${tool_outputs_dir}\
