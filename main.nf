@@ -44,10 +44,10 @@ if(params.data_download.run == "True"){
 }
 
 // make channels re-usable
-REFERENCE_10X_DIR = REFERENCE_10X_DIR.first()
-QUERY_10X_DIR = QUERY_10X_DIR.first()
-REFERENCE_METADATA = REFERENCE_METADATA.first()
-REF_MARKER_GENES = REF_MARKER_GENES.first()
+REFERENCE_10X_DIR = REFERENCE_10X_DIR.value()
+QUERY_10X_DIR = QUERY_10X_DIR.value()
+REFERENCE_METADATA = REFERENCE_METADATA.value()
+REF_MARKER_GENES = REF_MARKER_GENES.value()
 
 // run garnett 
 if(params.garnett.run == "True"){
@@ -73,7 +73,15 @@ if(params.garnett.run == "True"){
                             --results_dir \$RESULTS_DIR\
                             --ref_10x_dir ${reference_10X_dir}\
                             --query_10x_dir ${query_10X_dir}\
-                            --marker_genes ${ref_marker_genes}
+                            --marker_genes ${ref_marker_genes}\
+                            --ref_cds_gene_id_type ${params.garnett.ref_cds_gene_id_type}\
+                            --query_cds_gene_id_type ${params.garnett.query_cds_gene_id_type}\
+                            --database ${params.garnett.database}\
+                            --marker_gene_id_type ${params.garnett.marker_gene_id_type}\
+                            --classifier_gene_type ${params.garnett.classifier_gene_type}\
+                            --n_outgroups ${params.garnett.n_outgroups}\
+                            --cell_id_field ${params.garnett.cell_id_field}\
+                            --predicted_cell_type_field ${params.garnett.predicted_cell_type_field}
         """
     } 
 }
@@ -104,7 +112,13 @@ if(params.scmap_cell.run == "True"){
                             --projection_method ${params.scmap_cell.projection_method}\
                             --query_10x_dir ${query_10X_dir}\
                             --reference_10x_dir ${reference_10X_dir}\
-                            --reference_metadata ${ref_metadata}
+                            --reference_metadata ${ref_metadata}\
+                            --output_dir_cluster ${params.scmap_cell.output_dir_cluster}\
+                            --col_names ${params.scmap_cell.col_names}\
+                            --cell_id_col ${params.metadata.barcode_col_name}\
+                            --cluster_col ${params.metadata.ref_label_col_name}\
+                            --plot_file ${params.scmap_cell.plot_file}\
+                            --threshold ${params.scmap_cell.threshold}
         """
     }
 }
@@ -136,7 +150,13 @@ if(params.scmap_cluster.run == "True"){
                             --projection_method ${params.scmap_cluster.projection_method}
                             --query_10x_dir ${query_10X_dir}\
                             --reference_10x_dir ${reference_10X_dir}\
-                            --reference_metadata ${ref_metadata}
+                            --reference_metadata ${ref_metadata}\
+                            --output_dir_cluster ${params.scmap_cluster.output_dir_cluster}\
+                            --col_names ${params.scmap_cluster.col_names}\
+                            --cell_id_col ${params.metadata.barcode_col_name}\
+                            --cluster_col ${params.metadata.ref_label_col_name}\
+                            --plot_file ${params.scmap_cluster.plot_file}\
+                            --threshold ${params.scmap_cluster.threshold}
         """
     }
 }
@@ -167,7 +187,18 @@ if(params.scpred.run == "True"){
                             --method ${params.scpred.method}\
                             --training_10x_dir ${reference_10X_dir}\
                             --prediction_10x_dir ${query_10X_dir}\
-                            --metadata_file ${ref_metadata}
+                            --metadata_file ${ref_metadata}\
+                            --eigenvalue_plot_path ${params.scpred.eigenvalue_plot_path}\
+                            --train_probs_plot_path ${params.scpred.train_probs_plot_path}\
+                            --prediction_probs_path ${params.scpred.prediction_probs_path}\
+                            --model_predictions_path ${params.scpred.model_predictions_path}\
+                            --confusion_table_path ${params.scpred.confusion_table_path}\
+                            --normalised_counts_slot ${params.scpred.normalised_counts_slot}\
+                            --cell_id_col_name ${params.metadata.barcode_col_name}\
+                            --cell_types_col_name ${params.metadata.ref_label_col_name}\
+                            --col_names ${params.scpred.col_names}\
+                            --log_transform ${params.scpred.log_transform}\
+                            --model ${params.scpred.model}
         """
     }
 }
@@ -210,8 +241,15 @@ if(params.label_analysis.run == "True"){
                             --ref_labels_file ${ref_lab_file}\
                             --tool_perf_table ${params.label_analysis.tool_perf_table}\
                             --cell_anno_table ${params.label_analysis.cell_anno_table}\
-                            --tool_table_pvals ${params.label_analysis.tool_table_pvals}
+                            --tool_table_pvals ${params.label_analysis.tool_table_pvals}\
+                            --num_iter ${params.label_analysis.num_iter}\
+                            --num_cores ${params.label_analysis.num_cores}\
+                            --cell_ontology_col ${params.metadata.ref_CL_col_name}\
+                            --barcode_col_ref ${params.metadata.barcode_col_name}\
+                            --label_column_ref ${params.metadata.ref_label_col_name}\
+                            --semantic_sim_metric ${params.label_analysis.semantic_sim_metric}\
+                            --ontology_graph ${params.label_analysis.ontology_graph}\
+                            --empirical_dist ${params.label_analysis.empirical_dist}
         """
-
     }
 }
