@@ -1,0 +1,90 @@
+digraph "flowchart" {
+p0 [label="fetch_query_data"];
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="first"];
+p0 -> p3;
+
+p1 [label="fetch_ref_data"];
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="first"];
+p1 -> p2;
+
+p1 [label="fetch_ref_data"];
+p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="first"];
+p1 -> p4;
+
+p1 [label="fetch_ref_data"];
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="first"];
+p1 -> p5;
+
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="first"];
+p7 [label="run_scmap_cell_workflow"];
+p2 -> p7 [label="REFERENCE_10X_DIR"];
+
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="first"];
+p7 [label="run_scmap_cell_workflow"];
+p3 -> p7 [label="QUERY_10X_DIR"];
+
+p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="first"];
+p7 [label="run_scmap_cell_workflow"];
+p4 -> p7 [label="REFERENCE_METADATA"];
+
+p5 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="first"];
+p6 [shape=point];
+p5 -> p6 [label="REF_MARKER_GENES"];
+
+p7 [label="run_scmap_cell_workflow"];
+p8 [shape=point];
+p7 -> p8 [label="SCMAP_CELL_OUTPUT"];
+
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="first"];
+p9 [label="run_scmap_cluster_workflow"];
+p2 -> p9 [label="REFERENCE_10X_DIR"];
+
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="first"];
+p9 [label="run_scmap_cluster_workflow"];
+p3 -> p9 [label="QUERY_10X_DIR"];
+
+p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="first"];
+p9 [label="run_scmap_cluster_workflow"];
+p4 -> p9 [label="REFERENCE_METADATA"];
+
+p9 [label="run_scmap_cluster_workflow"];
+p10 [shape=point];
+p9 -> p10 [label="SCMAP_CLUST_OUTPUT"];
+
+p2 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="first"];
+p11 [label="run_scpred_workflow"];
+p2 -> p11 [label="REFERENCE_10X_DIR"];
+
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="first"];
+p11 [label="run_scpred_workflow"];
+p3 -> p11 [label="QUERY_10X_DIR"];
+
+p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="first"];
+p11 [label="run_scpred_workflow"];
+p4 -> p11 [label="REFERENCE_METADATA"];
+
+p11 [label="run_scpred_workflow"];
+p12 [shape=point];
+p11 -> p12 [label="SCPRED_OUTPUT"];
+
+p13 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.fromPath"];
+p14 [label="run_label_analysis"];
+p13 -> p14 [label="TOOL_OUTPUTS_DIR"];
+
+p4 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="first"];
+p14 [label="run_label_analysis"];
+p4 -> p14 [label="REFERENCE_METADATA"];
+
+p14 [label="run_label_analysis"];
+p17 [shape=point];
+p14 -> p17 [label="CELL_ANNO_TABLE"];
+
+p14 [label="run_label_analysis"];
+p16 [shape=point];
+p14 -> p16 [label="TOOL_PERF_TABLE"];
+
+p14 [label="run_label_analysis"];
+p15 [shape=point];
+p14 -> p15 [label="TOOL_TABLE_PVALS"];
+
+}
