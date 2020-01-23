@@ -212,7 +212,7 @@ tool_outputs_dir = file(params.tool_outputs_dir)
 output_size = tool_outputs_dir.list().size() // does this update at runtime ?
 n_tools = params.n_tools 
 
-if(params.label_analysis.run == "True"){
+if(params.label_analysis.run == "True" && output_size == n_tools){
     process run_label_analysis {
         conda 'envs/nextflow.yaml' 
         publishDir "${params.label_analysis.output_dir}", mode: 'copy'
@@ -225,9 +225,6 @@ if(params.label_analysis.run == "True"){
             file("${params.label_analysis.cell_anno_table}") into CELL_ANNO_TABLE
             file("${params.label_analysis.tool_perf_table}") into TOOL_PERF_TABLE
             file("${params.label_analysis.tool_table_pvals}") into TOOL_TABLE_PVALS
-
-        when:
-            output_size == n_tools
 
         """
         RESULTS_DIR=\$PWD
