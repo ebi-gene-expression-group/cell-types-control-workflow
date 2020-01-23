@@ -69,6 +69,7 @@ if(params.garnett.run == "True"){
         mkdir -p $WORK_DIR/\$SUBDIR
 
         nextflow run $GARNETT_BASE_DIR/main.nf\
+                            
                             -work-dir $WORK_DIR/\$SUBDIR\
                             --results_dir \$RESULTS_DIR\
                             --ref_10x_dir ${reference_10X_dir}\
