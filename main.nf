@@ -44,10 +44,10 @@ if(params.data_download.run == "True"){
 }
 
 // make channels re-usable
-REFERENCE_10X_DIR = REFERENCE_10X_DIR.value()
-QUERY_10X_DIR = QUERY_10X_DIR.value()
-REFERENCE_METADATA = REFERENCE_METADATA.value()
-REF_MARKER_GENES = REF_MARKER_GENES.value()
+//REFERENCE_10X_DIR = REFERENCE_10X_DIR.value()
+//QUERY_10X_DIR = QUERY_10X_DIR.value()
+//REFERENCE_METADATA = REFERENCE_METADATA.value()
+//REF_MARKER_GENES = REF_MARKER_GENES.value()
 
 // run garnett 
 if(params.garnett.run == "True"){
@@ -69,7 +69,7 @@ if(params.garnett.run == "True"){
         mkdir -p $WORK_DIR/\$SUBDIR
 
         nextflow run $GARNETT_BASE_DIR/main.nf\
-                            
+
                             -work-dir $WORK_DIR/\$SUBDIR\
                             --results_dir \$RESULTS_DIR\
                             --ref_10x_dir ${reference_10X_dir}\
