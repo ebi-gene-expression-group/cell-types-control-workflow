@@ -227,7 +227,7 @@ if(params.label_analysis.run == "True"){
             file("${params.label_analysis.tool_table_pvals}") into TOOL_TABLE_PVALS
 
         when:
-            output_size = n_tools
+            output_size == n_tools
 
         """
         RESULTS_DIR=\$PWD
