@@ -85,6 +85,8 @@ if(params.garnett.run == "True"){
                             --predicted_cell_type_field ${params.garnett.predicted_cell_type_field}
         """
     } 
+} else{
+    GARNETT_OUTPUT = Channel.empty()
 }
 
 // run scmap-cell
@@ -122,6 +124,8 @@ if(params.scmap_cell.run == "True"){
                             --threshold ${params.scmap_cell.threshold}
         """
     }
+} else {
+    SCMAP_CELL_OUTPUT = Channel.empty()
 }
 
 
@@ -160,6 +164,8 @@ if(params.scmap_cluster.run == "True"){
                             --threshold ${params.scmap_cluster.threshold}
         """
     }
+} else{
+    SCMAP_CLUST_OUTPUT = Channel.empty()
 }
 
 // run scpred 
@@ -202,27 +208,29 @@ if(params.scpred.run == "True"){
                             --model ${params.scpred.model}
         """
     }
+} else {
+    SCPRED_OUTPUT = Channel.empty()
 }
-// run the analysis of predicted labels 
+
+// run analysis of predicted labels 
 TOOL_OUTPUTS_DIR = Channel.fromPath(params.tool_outputs_dir)
-//REF_LAB_FILE = Channel.fromPath(params.data_download.reference_metadata)
-
-// need to control size of directory to avoid the process starting before all tools are run
-//tool_outputs_dir = file(params.tool_outputs_dir)
-//output_size = tool_outputs_dir.list().size() // does this update at runtime ?
-//n_tools = params.n_tools 
-
-println file("${params.tool_outputs_dir}").list().size()
+// combine output channels into one and form a list
+RESULTS_CH = GARNETT_OUTPUT.mix(SCMAP_CELL_OUTPUT,
+                                SCMAP_CLUST_OUTPUT,
+                                SCPRED_OUTPUT)
+                            .collate(params.n_tools)
 
 if(params.label_analysis.run == "True"){
     process run_label_analysis {
         conda 'envs/nextflow.yaml' 
         publishDir "${params.label_analysis.output_dir}", mode: 'copy'
 
+        // only run when all tools have produced output 
         when:
-            file("${params.tool_outputs_dir}").list().size() == params.n_tools
+           n_tools.size() == params.n_tools
 
         input:
+            val n_outputs from RESULTS_CH
             file(tool_outputs_dir) from TOOL_OUTPUTS_DIR
             file(ref_lab_file) from REFERENCE_METADATA
 
