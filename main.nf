@@ -71,6 +71,7 @@ if(params.garnett.run == "True"){
         nextflow run $GARNETT_BASE_DIR/main.nf\
 
                             -work-dir $WORK_DIR/\$SUBDIR\
+                            -config $CONTROL_CONFIG\
                             --results_dir \$RESULTS_DIR\
                             --ref_10x_dir ${reference_10X_dir}\
                             --query_10x_dir ${query_10X_dir}\
@@ -111,6 +112,7 @@ if(params.scmap_cell.run == "True"){
         nextflow run $SCMAP_GIT\
                             -r $SCMAP_GIT_BRANCH\
                             -work-dir $WORK_DIR/\$SUBDIR\
+                            -config $CONTROL_CONFIG\
                             --results_dir \$RESULTS_DIR\
                             --projection_method ${params.scmap_cell.projection_method}\
                             --query_10x_dir ${query_10X_dir}\
@@ -151,6 +153,7 @@ if(params.scmap_cluster.run == "True"){
         nextflow run $SCMAP_GIT\
                             -r $SCMAP_GIT_BRANCH\
                             -work-dir $WORK_DIR/\$SUBDIR\
+                            -config $CONTROL_CONFIG\
                             --results_dir \$RESULTS_DIR\
                             --projection_method ${params.scmap_cluster.projection_method}
                             --query_10x_dir ${query_10X_dir}\
@@ -189,6 +192,7 @@ if(params.scpred.run == "True"){
 
         nextflow run $SCPRED_GIT\
                             -r $SCPRED_GIT_BRANCH\
+                            -config $CONTROL_CONFIG\
                             -work-dir $WORK_DIR/\$SUBDIR\
                             --results_dir \$RESULTS_DIR\
                             --method ${params.scpred.method}\
