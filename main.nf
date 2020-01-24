@@ -212,10 +212,15 @@ TOOL_OUTPUTS_DIR = Channel.fromPath(params.tool_outputs_dir)
 //output_size = tool_outputs_dir.list().size() // does this update at runtime ?
 //n_tools = params.n_tools 
 
+println file("${params.tool_outputs_dir}").list().size()
+
 if(params.label_analysis.run == "True"){
     process run_label_analysis {
         conda 'envs/nextflow.yaml' 
         publishDir "${params.label_analysis.output_dir}", mode: 'copy'
+
+        when:
+            file("${params.tool_outputs_dir}").list().size() == params.n_tools
 
         input:
             file(tool_outputs_dir) from TOOL_OUTPUTS_DIR
@@ -226,10 +231,7 @@ if(params.label_analysis.run == "True"){
             file("${params.label_analysis.tool_perf_table}") into TOOL_PERF_TABLE
             file("${params.label_analysis.tool_table_pvals}") into TOOL_TABLE_PVALS
 
-        when:
-            file("${params.tool_outputs_dir}").list().size() == params.n_tools
-
-
+        
         """
         RESULTS_DIR=\$PWD
         SUBDIR="label_analysis"
