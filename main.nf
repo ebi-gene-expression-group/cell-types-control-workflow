@@ -227,7 +227,7 @@ if(params.label_analysis.run == "True"){
 
         // only run when all tools have produced output 
         when:
-           n_tools.size() == params.n_tools
+           n_outputs.size() == params.n_tools
 
         input:
             val n_outputs from RESULTS_CH
