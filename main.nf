@@ -66,9 +66,6 @@ if(params.garnett.run == "True"){
 
         """
         RESULTS_DIR=\$PWD
-        WORK_DIR=\$PWD
-        SUBDIR="garnett"
-        mkdir -p $WORK_DIR/\$SUBDIR
 
         nextflow run $GARNETT_BASE_DIR/main.nf\
                             -config $CONTROL_CONFIG\
@@ -105,10 +102,7 @@ if(params.scmap_cell.run == "True"){
             file("scmap-cell_output.txt") into SCMAP_CELL_OUTPUT
 
         """
-        RESULTS_DIR=\$PWD
-        WORK_DIR=\$PWD
-        SUBDIR="scmap_cell"
-        mkdir -p $WORK_DIR/\$SUBDIR     
+        RESULTS_DIR=\$PWD    
 
         nextflow run $SCMAP_GIT\
                             -r $SCMAP_GIT_BRANCH\
@@ -147,9 +141,6 @@ if(params.scmap_cluster.run == "True"){
 
         """
         RESULTS_DIR=\$PWD
-        WORK_DIR=\$PWD
-        SUBDIR="scmap_clust"
-        mkdir -p $WORK_DIR/\$SUBDIR 
 
         nextflow run $SCMAP_GIT\
                             -r $SCMAP_GIT_BRANCH\
@@ -187,9 +178,6 @@ if(params.scpred.run == "True"){
 
         """
         RESULTS_DIR=\$PWD
-        WORK_DIR=\$PWD
-        SUBDIR="scpred"
-        mkdir -p $WORK_DIR/\$SUBDIR 
 
         nextflow run $SCPRED_GIT\
                             -r $SCPRED_GIT_BRANCH\
@@ -245,10 +233,7 @@ if(params.label_analysis.run == "True"){
 
         
         """
-        RESULTS_DIR=\$PWD
-        WORK_DIR=\$PWD
-        SUBDIR="label_analysis"
-        mkdir -p $WORK_DIR/\$SUBDIR 
+        RESULTS_DIR=\$PWD 
 
         nextflow run $LABEL_ANALYSIS_GIT\
                             -r $LABEL_ANALYSIS_GIT_BRANCH\
