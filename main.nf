@@ -210,12 +210,11 @@ if(params.scpred.run == "True"){
 }
 
 // Combine method outputs into single channel
- GARNETT_OUTPUT
+ ALL_RESULTS = 
+    GARNETT_OUTPUT
     .concat(SCMAP_CLUST_OUTPUT)
     .concat(SCMAP_CELL_OUTPUT)
     .concat(SCPRED_OUTPUT)
-    .set(ALL_RESULTS)
-
 // place tool outputs into single dir
 process combine_results{
     input:
