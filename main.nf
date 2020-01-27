@@ -65,6 +65,7 @@ if(params.garnett.run == "True"){
 
         """
         RESULTS_DIR=\$PWD
+        WORK_DIR=\$PWD
         SUBDIR="garnett"
         mkdir -p $WORK_DIR/\$SUBDIR
 
@@ -106,13 +107,14 @@ if(params.scmap_cell.run == "True"){
 
         """
         RESULTS_DIR=\$PWD
+        WORK_DIR=\$PWD
         SUBDIR="scmap_cell"
         mkdir -p $WORK_DIR/\$SUBDIR     
 
         nextflow run $SCMAP_GIT\
                             -r $SCMAP_GIT_BRANCH\
-                            -work-dir $WORK_DIR/\$SUBDIR\
                             -config $CONTROL_CONFIG\
+                            -work-dir $WORK_DIR/\$SUBDIR\
                             --results_dir \$RESULTS_DIR\
                             --projection_method ${params.scmap_cell.projection_method}\
                             --query_10x_dir ${query_10X_dir}\
@@ -147,13 +149,14 @@ if(params.scmap_cluster.run == "True"){
 
         """
         RESULTS_DIR=\$PWD
+        WORK_DIR=\$PWD
         SUBDIR="scmap_clust"
         mkdir -p $WORK_DIR/\$SUBDIR 
 
         nextflow run $SCMAP_GIT\
                             -r $SCMAP_GIT_BRANCH\
-                            -work-dir $WORK_DIR/\$SUBDIR\
                             -config $CONTROL_CONFIG\
+                            -work-dir $WORK_DIR/\$SUBDIR\
                             --results_dir \$RESULTS_DIR\
                             --projection_method ${params.scmap_cluster.projection_method}
                             --query_10x_dir ${query_10X_dir}\
@@ -187,6 +190,7 @@ if(params.scpred.run == "True"){
 
         """
         RESULTS_DIR=\$PWD
+        WORK_DIR=\$PWD
         SUBDIR="scpred"
         mkdir -p $WORK_DIR/\$SUBDIR 
 
@@ -246,6 +250,7 @@ if(params.label_analysis.run == "True"){
         
         """
         RESULTS_DIR=\$PWD
+        WORK_DIR=\$PWD
         SUBDIR="label_analysis"
         mkdir -p $WORK_DIR/\$SUBDIR 
 
