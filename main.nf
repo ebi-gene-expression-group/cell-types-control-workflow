@@ -3,6 +3,9 @@
 // Meta-workflow that controls execution of steps in cell type 
 // prediction tools evaluation framework
 
+
+//TODO: add metadata files for both datasets
+
 // extract reference and query data
 if(params.data_download.run == "True"){
     process fetch_query_data{
@@ -44,10 +47,10 @@ if(params.data_download.run == "True"){
 }
 
 // make channels re-usable
-//REFERENCE_10X_DIR = REFERENCE_10X_DIR.value()
-//QUERY_10X_DIR = QUERY_10X_DIR.value()
-//REFERENCE_METADATA = REFERENCE_METADATA.value()
-//REF_MARKER_GENES = REF_MARKER_GENES.value()
+REFERENCE_10X_DIR = REFERENCE_10X_DIR.value()
+QUERY_10X_DIR = QUERY_10X_DIR.value()
+REFERENCE_METADATA = REFERENCE_METADATA.value()
+REF_MARKER_GENES = REF_MARKER_GENES.value()
 
 // run garnett 
 // -work-dir $WORK_DIR/\$SUBDIR\
@@ -103,6 +106,8 @@ if(params.scmap_cell.run == "True"){
 
         """
         RESULTS_DIR=\$PWD    
+
+        //check input exists 
 
         nextflow run $SCMAP_GIT\
                             -r $SCMAP_GIT_BRANCH\
@@ -204,26 +209,38 @@ if(params.scpred.run == "True"){
     SCPRED_OUTPUT = Channel.empty()
 }
 
-// run analysis of predicted labels 
-TOOL_OUTPUTS_DIR = Channel.fromPath(params.tool_outputs_dir)
-// combine output channels into one and form a list
-RESULTS_CH = GARNETT_OUTPUT.mix(SCMAP_CELL_OUTPUT,
-                                SCMAP_CLUST_OUTPUT,
-                                SCPRED_OUTPUT)
-                            .collate(params.n_tools)
+// Combine method outputs into single channel
+ GARNETT_OUTPUT
+    .concat(SCMAP_CLUST_OUTPUT)
+    .concat(SCMAP_CELL_OUTPUT)
+    .concat(SCPRED_OUTPUT)
+    .set(ALL_RESULTS)
 
+// place tool outputs into single dir
+process combine_results{
+    input:
+        file(method_outputs) from ALL_RESULTS.collect()
+
+    output:
+        file('results_dir') into COMBINED_RESULTS_DIR
+
+    """
+    mkdir -p results_dir/
+    for file in ${method_outputs}
+    do
+        mv \$file results_dir
+    done
+    """
+}
+
+// run analysis of predicted labels 
 if(params.label_analysis.run == "True"){
     process run_label_analysis {
         conda 'envs/nextflow.yaml' 
         publishDir "${params.label_analysis.output_dir}", mode: 'copy'
 
-        // only run when all tools have produced output 
-        when:
-           n_outputs.size() == params.n_tools
-
         input:
-            val n_outputs from RESULTS_CH
-            file(tool_outputs_dir) from TOOL_OUTPUTS_DIR
+            file(tool_outputs_dir) from COMBINED_RESULTS_DIR
             file(ref_lab_file) from REFERENCE_METADATA
 
         output:
@@ -231,7 +248,6 @@ if(params.label_analysis.run == "True"){
             file("${params.label_analysis.tool_perf_table}") into TOOL_PERF_TABLE
             file("${params.label_analysis.tool_table_pvals}") into TOOL_TABLE_PVALS
 
-        
         """
         RESULTS_DIR=\$PWD 
 

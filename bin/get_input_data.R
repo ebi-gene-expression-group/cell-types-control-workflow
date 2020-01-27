@@ -77,6 +77,10 @@ option_list = list(
     )
 )
 
+
+#TODO: ADD DYNAMIC URL BUILDING 
+# simplify logic 
+
 opt = wsc_parse_args(option_list, mandatory = c("data_type", "output_10x_dir", 
                                                 "mat_url", "barcodes_url", "genes_url"))
 
