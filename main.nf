@@ -50,6 +50,7 @@ if(params.data_download.run == "True"){
 //REF_MARKER_GENES = REF_MARKER_GENES.value()
 
 // run garnett 
+// -work-dir $WORK_DIR/\$SUBDIR\
 if(params.garnett.run == "True"){
     process run_garnett_workflow {
         publishDir "${params.tool_outputs_dir}", mode: 'copy'
@@ -70,8 +71,6 @@ if(params.garnett.run == "True"){
         mkdir -p $WORK_DIR/\$SUBDIR
 
         nextflow run $GARNETT_BASE_DIR/main.nf\
-
-                            -work-dir $WORK_DIR/\$SUBDIR\
                             -config $CONTROL_CONFIG\
                             --results_dir \$RESULTS_DIR\
                             --ref_10x_dir ${reference_10X_dir}\
@@ -114,7 +113,6 @@ if(params.scmap_cell.run == "True"){
         nextflow run $SCMAP_GIT\
                             -r $SCMAP_GIT_BRANCH\
                             -config $CONTROL_CONFIG\
-                            -work-dir $WORK_DIR/\$SUBDIR\
                             --results_dir \$RESULTS_DIR\
                             --projection_method ${params.scmap_cell.projection_method}\
                             --query_10x_dir ${query_10X_dir}\
@@ -156,7 +154,6 @@ if(params.scmap_cluster.run == "True"){
         nextflow run $SCMAP_GIT\
                             -r $SCMAP_GIT_BRANCH\
                             -config $CONTROL_CONFIG\
-                            -work-dir $WORK_DIR/\$SUBDIR\
                             --results_dir \$RESULTS_DIR\
                             --projection_method ${params.scmap_cluster.projection_method}
                             --query_10x_dir ${query_10X_dir}\
@@ -197,7 +194,6 @@ if(params.scpred.run == "True"){
         nextflow run $SCPRED_GIT\
                             -r $SCPRED_GIT_BRANCH\
                             -config $CONTROL_CONFIG\
-                            -work-dir $WORK_DIR/\$SUBDIR\
                             --results_dir \$RESULTS_DIR\
                             --method ${params.scpred.method}\
                             --training_10x_dir ${reference_10X_dir}\
@@ -256,7 +252,6 @@ if(params.label_analysis.run == "True"){
 
         nextflow run $LABEL_ANALYSIS_GIT\
                             -r $LABEL_ANALYSIS_GIT_BRANCH\
-                            -work-dir $WORK_DIR/\$SUBDIR\
                             --results_dir \$RESULTS_DIR\
                             --input_dir ${tool_outputs_dir}\
                             --ref_labels_file ${ref_lab_file}\
