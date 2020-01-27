@@ -144,7 +144,7 @@ if(params.scmap_cluster.run == "True"){
 
         nextflow run $SCMAP_BASE_DIR/main.nf\
                             --results_dir \$RESULTS_DIR\
-                            --projection_method ${params.scmap_cluster.projection_method}
+                            --projection_method ${params.scmap_cluster.projection_method}\
                             --query_10x_dir ${query_10X_dir}\
                             --reference_10x_dir ${reference_10X_dir}\
                             --reference_metadata ${ref_metadata}\
