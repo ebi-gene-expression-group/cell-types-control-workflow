@@ -106,7 +106,8 @@ if(params.scmap_cell.run == "True"){
         """
         RESULTS_DIR=\$PWD    
 
-        nextflow run $SCMAP_BASE_DIR/main.nf\
+        nextflow run $SCMAP_GIT\
+                            -r nested_workflow\
                             --results_dir \$RESULTS_DIR\
                             --projection_method ${params.scmap_cell.projection_method}\
                             --query_10x_dir ${query_10X_dir}\
@@ -142,7 +143,8 @@ if(params.scmap_cluster.run == "True"){
         """
         RESULTS_DIR=\$PWD
 
-        nextflow run $SCMAP_BASE_DIR/main.nf\
+        nextflow run $SCMAP_GIT\
+                            -r nested_workflow\
                             --results_dir \$RESULTS_DIR\
                             --projection_method ${params.scmap_cluster.projection_method}\
                             --query_10x_dir ${query_10X_dir}\
