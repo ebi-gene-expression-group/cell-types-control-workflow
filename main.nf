@@ -12,6 +12,10 @@ if(params.data_download.run == "True"){
         publishDir "${baseDir}/data", mode: 'copy'
         conda 'envs/load_data.yaml'
 
+        errorStrategy { task.exitStatus == 130 || task.exitStatus == 137  ? 'retry' : 'finish' }   
+        maxRetries 5
+        memory { 16.GB * task.attempt }
+
         output:
             file("query_10X_dir") into QUERY_10X_DIR 
 
@@ -27,6 +31,10 @@ if(params.data_download.run == "True"){
     process fetch_ref_data{
         publishDir "${baseDir}/data", mode: 'copy'
         conda 'envs/load_data.yaml'
+
+        errorStrategy { task.exitStatus == 130 || task.exitStatus == 137  ? 'retry' : 'finish' }   
+        maxRetries 5
+        memory { 16.GB * task.attempt }
 
         output:
             file("reference_10X_dir") into REFERENCE_10X_DIR 
@@ -59,6 +67,10 @@ if(params.garnett.run == "True"){
         publishDir "${params.tool_outputs_dir}", mode: 'copy'
         conda 'envs/nextflow.yaml'
 
+        errorStrategy { task.exitStatus == 130 || task.exitStatus == 137  ? 'retry' : 'finish' }   
+        maxRetries 5
+        memory { 16.GB * task.attempt }
+        
         input:
             file(reference_10X_dir) from REFERENCE_10X_DIR
             file(query_10X_dir) from QUERY_10X_DIR
@@ -94,6 +106,10 @@ if(params.scmap_cell.run == "True"){
     process run_scmap_cell_workflow {
         publishDir "${params.tool_outputs_dir}", mode: 'copy'
         conda 'envs/nextflow.yaml'
+
+        errorStrategy { task.exitStatus == 130 || task.exitStatus == 137  ? 'retry' : 'finish' }   
+        maxRetries 5
+        memory { 16.GB * task.attempt }
 
         input:
             file(reference_10X_dir) from REFERENCE_10X_DIR
@@ -132,6 +148,10 @@ if(params.scmap_cluster.run == "True"){
         publishDir "${params.tool_outputs_dir}", mode: 'copy'
         conda 'envs/nextflow.yaml'
 
+        errorStrategy { task.exitStatus == 130 || task.exitStatus == 137  ? 'retry' : 'finish' }   
+        maxRetries 5
+        memory { 16.GB * task.attempt }
+
         input:
             file(reference_10X_dir) from REFERENCE_10X_DIR
             file(query_10X_dir) from QUERY_10X_DIR
@@ -168,6 +188,10 @@ if(params.scpred.run == "True"){
         publishDir "${params.tool_outputs_dir}", mode: 'copy'
         conda 'envs/nextflow.yaml'
 
+        errorStrategy { task.exitStatus == 130 || task.exitStatus == 137  ? 'retry' : 'finish' }   
+        maxRetries 5
+        memory { 16.GB * task.attempt }
+        
         input:
             file(reference_10X_dir) from REFERENCE_10X_DIR
             file(query_10X_dir) from QUERY_10X_DIR
@@ -231,6 +255,10 @@ if(params.label_analysis.run == "True"){
     process run_label_analysis {
         conda 'envs/nextflow.yaml' 
         publishDir "${params.label_analysis.output_dir}", mode: 'copy'
+
+        errorStrategy { task.exitStatus == 130 || task.exitStatus == 137  ? 'retry' : 'finish' }   
+        maxRetries 5
+        memory { 16.GB * task.attempt }
 
         input:
             file(tool_outputs_dir) from COMBINED_RESULTS_DIR
