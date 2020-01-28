@@ -129,7 +129,7 @@ if(params.scmap_cell.run == "True"){
                             --query_10x_dir ${query_10X_dir}\
                             --reference_10x_dir ${reference_10X_dir}\
                             --reference_metadata ${ref_metadata}\
-                            --output_dir_cluster ${params.scmap_cell.output_dir_cluster}\
+                            --output_dir_cell ${params.scmap_cell.output_dir_cell}\
                             --col_names ${params.scmap_cell.col_names}\
                             --cell_id_col ${params.metadata.barcode_col_name}\
                             --cluster_col ${params.metadata.ref_label_col_name}\
