@@ -54,12 +54,6 @@ if(params.data_download.run == "True"){
     }
 }
 
-// make channels re-usable
-//REFERENCE_10X_DIR = REFERENCE_10X_DIR.value()
-//QUERY_10X_DIR = QUERY_10X_DIR.value()
-//REFERENCE_METADATA = REFERENCE_METADATA.value()
-//REF_MARKER_GENES = REF_MARKER_GENES.value()
-
 // run garnett 
 // -work-dir $WORK_DIR/\$SUBDIR\
 if(params.garnett.run == "True"){
@@ -82,7 +76,8 @@ if(params.garnett.run == "True"){
         """
         RESULTS_DIR=\$PWD
 
-        nextflow run $GARNETT_BASE_DIR/main.nf\
+        nextflow run $GARNETT_GIT\
+                            -r $GARNETT_GIT_BRANCH\
                             --results_dir \$RESULTS_DIR\
                             --ref_10x_dir ${reference_10X_dir}\
                             --query_10x_dir ${query_10X_dir}\
@@ -123,7 +118,7 @@ if(params.scmap_cell.run == "True"){
         RESULTS_DIR=\$PWD    
 
         nextflow run $SCMAP_GIT\
-                            -r nested_workflow\
+                            -r $SCMAP_GIT_BRANCH\
                             --results_dir \$RESULTS_DIR\
                             --projection_method ${params.scmap_cell.projection_method}\
                             --query_10x_dir ${query_10X_dir}\
@@ -164,7 +159,7 @@ if(params.scmap_cluster.run == "True"){
         RESULTS_DIR=\$PWD
 
         nextflow run $SCMAP_GIT\
-                            -r nested_workflow\
+                            -r $SCMAP_GIT_BRANCH\
                             --results_dir \$RESULTS_DIR\
                             --projection_method ${params.scmap_cluster.projection_method}\
                             --query_10x_dir ${query_10X_dir}\
