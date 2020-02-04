@@ -55,7 +55,6 @@ if(params.data_download.run == "True"){
 }
 
 // run garnett 
-// -work-dir $WORK_DIR/\$SUBDIR\
 if(params.garnett.run == "True"){
     process run_garnett_workflow {
         publishDir "${params.tool_outputs_dir}", mode: 'copy'
@@ -126,7 +125,7 @@ if(params.scmap_cell.run == "True"){
                             --reference_metadata ${ref_metadata}\
                             --output_dir_cell ${params.scmap_cell.output_dir_cell}\
                             --col_names ${params.scmap_cell.col_names}\
-                            --cell_id_col ${params.metadata.barcode_col_name}\
+                            --cell_id_col ${params.metadata.ref_barcode_col_name}\
                             --cluster_col ${params.metadata.ref_label_col_name}\
                             --plot_file ${params.scmap_cell.plot_file}\
                             --threshold ${params.scmap_cell.threshold}
@@ -167,7 +166,7 @@ if(params.scmap_cluster.run == "True"){
                             --reference_metadata ${ref_metadata}\
                             --output_dir_cluster ${params.scmap_cluster.output_dir_cluster}\
                             --col_names ${params.scmap_cluster.col_names}\
-                            --cell_id_col ${params.metadata.barcode_col_name}\
+                            --cell_id_col ${params.metadata.ref_barcode_col_name}\
                             --cluster_col ${params.metadata.ref_label_col_name}\
                             --plot_file ${params.scmap_cluster.plot_file}\
                             --threshold ${params.scmap_cluster.threshold}
@@ -211,7 +210,7 @@ if(params.scpred.run == "True"){
                             --model_predictions_path ${params.scpred.model_predictions_path}\
                             --confusion_table_path ${params.scpred.confusion_table_path}\
                             --normalised_counts_slot ${params.scpred.normalised_counts_slot}\
-                            --cell_id_col_name ${params.metadata.barcode_col_name}\
+                            --cell_id_col_name ${params.metadata.ref_barcode_col_name}\
                             --cell_types_col_name ${params.metadata.ref_label_col_name}\
                             --col_names ${params.scpred.col_names}\
                             --log_transform ${params.scpred.log_transform}\
@@ -277,9 +276,9 @@ if(params.label_analysis.run == "True"){
                             --tool_table_pvals ${params.label_analysis.tool_table_pvals}\
                             --num_iter ${params.label_analysis.num_iter}\
                             --num_cores ${params.label_analysis.num_cores}\
-                            --cell_ontology_col ${params.metadata.ref_CL_col_name}\
-                            --barcode_col_ref ${params.metadata.barcode_col_name}\
-                            --label_column_ref ${params.metadata.ref_label_col_name}\
+                            --cell_ontology_col ${params.metadata.query_CL_col_name}\
+                            --barcode_col_ref ${params.metadata.query_barcode_col_name}\
+                            --label_column_ref ${params.metadata.query_label_col_name}\
                             --semantic_sim_metric ${params.label_analysis.semantic_sim_metric}\
                             --ontology_graph ${params.label_analysis.ontology_graph}\
                             --empirical_dist ${params.label_analysis.empirical_dist}
