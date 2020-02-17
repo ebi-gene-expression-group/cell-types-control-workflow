@@ -74,6 +74,80 @@ if(params.data_download.run == "True"){
     }
 }
 
+// need to map cell labels to CL terms via zooma
+// TODO: finalise these processes
+if(params.zooma_mapping.run == "True"){
+    process run_cl_mapping_ref {
+        output:
+            file(blah) into CONDENSED_SDRF_REF
+
+        """
+        single_cell_condensed_sdrf.sh\
+                -e ${params.data_download.ref_acc_code}\
+                -o \$(pwd)\
+                -z ${params.zooma_mapping.zooma_exclusions_path}
+
+
+        """
+
+    }
+
+    process unmelt_sdrf_ref {
+        input:
+            file(blah) from CONDENSED_SDRF_REF
+
+        output:
+            file("ref_metadata.tsv") into UNMELTED_SDRF_REF
+
+        """
+        unmelt_condensed.R\
+                -i ${blah}\
+                -o ref_metadata.tsv\
+                --retain-types\
+                --has-ontology                 
+        """
+    }
+
+    process run_cl_mapping_query {
+        output:
+            file(blah) into CONDENSED_SDRF_QUERY
+
+        """
+        single_cell_condensed_sdrf.sh\
+                -e ${params.data_download.query_acc_code}\
+                -o \$(pwd)\
+                -z ${params.zooma_mapping.zooma_exclusions_path} 
+        """
+    }
+
+    process unmelt_sdrf_query {
+        input:
+            file(blah) from CONDENSED_SDRF_QUERY
+
+        output:
+            file("query_metadata.tsv") into UNMELTED_SDRF_QUERY
+
+        """
+        unmelt_condensed.R\
+                -i ${blah}\
+                -o query_metadata.tsv\
+                --retain-types\
+                --has-ontology                 
+        """
+
+    }
+} else{
+    UNMELTED_SDRF_REF = Channel.empty()
+    UNMELTED_SDRF_QUERY = Channel.empty()
+}
+
+// mapping to re-direct data into correct channels 
+run_zooma = params.zooma_mapping.run
+channels = ["True":0, "False":1]
+REF_SDRF_UPD.choice(UNMELTED_SDRF_REF, REF_SDRF){channels[run_zooma]}
+QUERY_SDRF_UPD.choice(UNMELTED_SDRF_QUERY, QUERY_SDRF){channels[run_zooma]}
+
+
 // run garnett 
 if(params.garnett.run == "True"){
     process run_garnett_workflow {
@@ -128,7 +202,7 @@ if(params.scmap_cell.run == "True"){
         input:
             file(reference_10X_dir) from REF_10X_DIR
             file(query_10X_dir) from QUERY_10X_DIR
-            file(ref_metadata) from REF_SDRF
+            file(ref_metadata) from REF_SDRF_UPD
 
         output: 
             file("scmap-cell_output.txt") into SCMAP_CELL_OUTPUT
@@ -169,7 +243,7 @@ if(params.scmap_cluster.run == "True"){
         input:
             file(reference_10X_dir) from REF_10X_DIR
             file(query_10X_dir) from QUERY_10X_DIR
-            file(ref_metadata) from REF_SDRF
+            file(ref_metadata) from REF_SDRF_UPD
 
         output:
             file("scmap-cluster_output.txt") into SCMAP_CLUST_OUTPUT
@@ -209,7 +283,7 @@ if(params.scpred.run == "True"){
         input:
             file(reference_10X_dir) from REF_10X_DIR
             file(query_10X_dir) from QUERY_10X_DIR
-            file(ref_metadata) from REF_SDRF
+            file(ref_metadata) from REF_SDRF_UPD
 
         output:
             file("scpred_output.txt") into SCPRED_OUTPUT
@@ -276,7 +350,8 @@ if(params.label_analysis.run == "True"){
 
         input:
             file(tool_outputs_dir) from COMBINED_RESULTS_DIR
-            file(ref_lab_file) from REF_SDRF
+            // NB: use query labels as 'true' labels; ref labels were used for model training
+            file(query_lab_file) from QUERY_SDRF_UPD
 
         output:
             file("${params.label_analysis.tool_perf_table}") into TOOL_PERF_TABLE
