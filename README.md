@@ -6,5 +6,5 @@ A meta-workflow that controls the Nextflow pipelines for multiple tools in a sca
 * [cell-types-analysis-workflow](https://github.com/ebi-gene-expression-group/cell-types-analysis-workflow)
 
 Schematic representation of the workflow is shown below:
-![](https://github.com/ebi-gene-expression-group/cell-types-control-workflow/blob/add_zooma_mapping/pipeline_scheme.png)
+![](https://github.com/ebi-gene-expression-group/cell-types-control-workflow/blob/add_zooma_mapping/control_pipeline.png)
 
