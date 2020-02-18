@@ -325,7 +325,7 @@ if(params.label_analysis.run == "True"){
                             -r $LABEL_ANALYSIS_GIT_BRANCH\
                             --results_dir \$RESULTS_DIR\
                             --input_dir ${tool_outputs_dir}\
-                            --ref_labels_file ${ref_lab_file}\
+                            --ref_labels_file ${query_lab_file}\
                             --tool_perf_table ${params.label_analysis.tool_perf_table}\
                             --cell_anno_table ${params.label_analysis.cell_anno_table}\
                             --tool_table_pvals ${params.label_analysis.tool_table_pvals}\
