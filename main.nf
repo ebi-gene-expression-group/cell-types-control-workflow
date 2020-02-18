@@ -101,7 +101,7 @@ if(params.data_download.run == "True"){
 
         """
         unmelt_condensed.R\
-                -i ${blah}\
+                -i ${condensed_sdrf}\
                 -o ref_sdrf_proc.tsv\
                 --retain-types\
                 --has-ontology                 
