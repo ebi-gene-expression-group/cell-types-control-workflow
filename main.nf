@@ -44,6 +44,7 @@ if(params.data_download.run == "True"){
 
     // condensed sdrf files need 'un-melting' 
     process unmelt_sdrf_query {
+        conda 'envs/exp_metadata.yaml'
         input:
             file(condensed_sdrf) from CONDENSED_SDRF_QUERY
 
@@ -91,19 +92,20 @@ if(params.data_download.run == "True"){
     }
     
     process unmelt_sdrf_ref {
-    input:
-        file(condensed_sdrf) from CONDENSED_SDRF_REF
+        conda 'envs/exp_metadata.yaml'
+        input:
+            file(condensed_sdrf) from CONDENSED_SDRF_REF
 
-    output:
-        file("ref_sdrf_proc.tsv") into UNMELT_SDRF_REF
+        output:
+            file("ref_sdrf_proc.tsv") into UNMELT_SDRF_REF
 
-    """
-    unmelt_condensed.R\
-            -i ${blah}\
-            -o ref_sdrf_proc.tsv\
-            --retain-types\
-            --has-ontology                 
-    """
+        """
+        unmelt_condensed.R\
+                -i ${blah}\
+                -o ref_sdrf_proc.tsv\
+                --retain-types\
+                --has-ontology                 
+        """
     }
 }
 
