@@ -257,6 +257,7 @@ if(params.scpred.run == "True"){
                             -r $SCPRED_GIT_BRANCH\
                             --results_dir \$RESULTS_DIR\
                             --method ${params.scpred.method}\
+                            -latest\
                             --training_10x_dir ${reference_10X_dir}\
                             --prediction_10x_dir ${query_10X_dir}\
                             --metadata_file ${ref_metadata}\
