@@ -107,10 +107,17 @@ if(params.data_download.run == "True"){
                 --has-ontology                 
         """
     }
+    
+}else{
+    REF_10X_DIR = Channel.fromPath(params.cv_ref_10x_dir).first()
+    QUERY_10X_DIR = Channel.fromPath(params.cv_query_10x_dir).first()
+    UNMELT_SDRF_REF = Channel.fromPath(params.cv_unmelt_sdrf_ref).first()
+    UNMELTED_SDRF_QUERY = Channel.fromPath(params.cv_unmelt_sdrf_query).first()
+    REF_MARKERS = Channel.fromPath(params.cv_ref_markers).first()
 }
 
 // run garnett 
-if(params.garnett.run == "True"){
+if(params.garnett.run == "False"){
     process run_garnett_workflow {
         publishDir "${params.tool_outputs_dir}", mode: 'copy'
         conda "${baseDir}/envs/nextflow.yaml"
