@@ -117,7 +117,7 @@ if(params.data_download.run == "True"){
 }
 
 // run garnett 
-if(params.garnett.run == "False"){
+if(params.garnett.run == "True"){
     process run_garnett_workflow {
         publishDir "${params.tool_outputs_dir}", mode: 'copy'
         conda "${baseDir}/envs/nextflow.yaml"
@@ -330,11 +330,12 @@ if(params.label_analysis.run == "True"){
             file("${params.label_analysis.tool_table_pvals}") into TOOL_TABLE_PVALS
 
         """
-        RESULTS_DIR=\$PWD 
+        #RESULTS_DIR="\$PWD" 
 
         nextflow run $EVAL_WORKFLOWS/label-analysis-eval-workflow/main.nf\
                             -profile cluster\
-                            --results_dir \$RESULTS_DIR\
+                            //--results_dir \$RESULTS_DIR\
+                            --results_dir ${params.label_analysis_outdir}\
                             --input_dir ${tool_outputs_dir}\
                             --ref_labels_file ${query_lab_file}\
                             --tool_perf_table ${params.label_analysis.tool_perf_table}\
