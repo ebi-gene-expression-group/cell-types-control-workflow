@@ -115,8 +115,13 @@ if(params.data_download.run == "True"){
     UNMELTED_SDRF_QUERY = Channel.fromPath(params.cv_unmelt_sdrf_query).first()
     REF_MARKERS = Channel.fromPath(params.cv_ref_markers).first()
 }
+//REF_10X_DIR.view{ it } 
+//QUERY_10X_DIR.view{ it }
+//UNMELT_SDRF_REF.view{ it }
+//UNMELT_SDRF_QUERY.view{it}
+//REF_MARKERS.view{it}
 
-// run garnett 
+//run garnett 
 if(params.garnett.run == "True"){
     process run_garnett_workflow {
         publishDir "${params.tool_outputs_dir}", mode: 'copy'
@@ -142,7 +147,7 @@ if(params.garnett.run == "True"){
                             --results_dir \$RESULTS_DIR\
                             --ref_10x_dir ${reference_10X_dir}\
                             --query_10x_dir ${query_10X_dir}\
-                            --marker_genes ${ref_marker_genes}\
+                            --marker_genes ${cv_ref_markes}\
                             --pval-col ${params.garnett.pval_col}\
                             --groups-col ${params.garnett.groups_col}\
                             --gene-names ${params.garnett.gene_names}\
@@ -314,8 +319,8 @@ process combine_results{
 if(params.label_analysis.run == "True"){
     process run_label_analysis {
         conda "${baseDir}/envs/nextflow.yaml"
-        publishDir "${params.label_analysis.output_dir}", mode: 'copy'
-
+        //publishDir "\${params.label_analysis_outdir}", mode: 'copy'
+	publishDir "${params.label_analysis.output_dir}", mode: 'copy'
         errorStrategy { task.exitStatus == 130 || task.exitStatus == 137  ? 'retry' : 'finish' }   
         maxRetries 5
         memory { 16.GB * task.attempt }
@@ -330,12 +335,12 @@ if(params.label_analysis.run == "True"){
             file("${params.label_analysis.tool_table_pvals}") into TOOL_TABLE_PVALS
 
         """
-        #RESULTS_DIR="\$PWD" 
+        RESULTS_DIR="\$PWD" 
 
         nextflow run $EVAL_WORKFLOWS/label-analysis-eval-workflow/main.nf\
                             -profile cluster\
-                            //--results_dir \$RESULTS_DIR\
-                            --results_dir ${params.label_analysis_outdir}\
+                            --results_dir \$RESULTS_DIR\
+                            //--results_dir \${params.label_analysis_outdir}\
                             --input_dir ${tool_outputs_dir}\
                             --ref_labels_file ${query_lab_file}\
                             --tool_perf_table ${params.label_analysis.tool_perf_table}\
