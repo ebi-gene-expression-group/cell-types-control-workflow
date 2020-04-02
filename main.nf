@@ -319,8 +319,7 @@ process combine_results{
 if(params.label_analysis.run == "True"){
     process run_label_analysis {
         conda "${baseDir}/envs/nextflow.yaml"
-        //publishDir "\${params.label_analysis_outdir}", mode: 'copy'
-	publishDir "${params.label_analysis.output_dir}", mode: 'copy'
+        publishDir "${params.label_analysis_outdir}", mode: 'copy'
         errorStrategy { task.exitStatus == 130 || task.exitStatus == 137  ? 'retry' : 'finish' }   
         maxRetries 5
         memory { 16.GB * task.attempt }
@@ -340,7 +339,6 @@ if(params.label_analysis.run == "True"){
         nextflow run $EVAL_WORKFLOWS/label-analysis-eval-workflow/main.nf\
                             -profile cluster\
                             --results_dir \$RESULTS_DIR\
-                            //--results_dir \${params.label_analysis_outdir}\
                             --input_dir ${tool_outputs_dir}\
                             --ref_labels_file ${query_lab_file}\
                             --tool_perf_table ${params.label_analysis.tool_perf_table}\
