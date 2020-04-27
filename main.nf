@@ -129,20 +129,19 @@ if(params.garnett.run == "True"){
         input:
             file(reference_10X_dir) from REF_10X_DIR
             file(query_10X_dir) from QUERY_10X_DIR
-            file(ref_marker_genes) from REF_MARKERS
+            file(ref_markers) from REF_MARKERS
 
         output:
              file("final_garnett_output.txt") into GARNETT_OUTPUT
 
         """
         RESULTS_DIR=\$PWD
-	#pushd $EVAL_WORKFLOWS > dev/null #this is apparently  resume
         nextflow run $EVAL_WORKFLOWS/garnett-eval-workflow/main.nf\
                             -profile cluster\
                             --results_dir \$RESULTS_DIR\
                             --ref_10x_dir ${reference_10X_dir}\
                             --query_10x_dir ${query_10X_dir}\
-                            --marker_genes ${cv_ref_markes}\
+                            --marker_genes ${ref_markers}\
                             --pval-col ${params.garnett.pval_col}\
                             --groups-col ${params.garnett.groups_col}\
                             --gene-names ${params.garnett.gene_names}\
@@ -180,7 +179,6 @@ if(params.scmap_cell.run == "True"){
 
         """
         RESULTS_DIR=\$PWD    
-	#pushd $EVAL_WORKFLOWS > dev/null #this is apparently  resume
         nextflow run $EVAL_WORKFLOWS/scmap-eval-workflow/main.nf\
                             -profile cluster\
                             --results_dir \$RESULTS_DIR\
@@ -221,7 +219,6 @@ if(params.scmap_cluster.run == "True"){
 
         """
         RESULTS_DIR=\$PWD
-	#pushd $EVAL_WORKFLOWS > dev/null #this is apparently  resume
         nextflow run $EVAL_WORKFLOWS/scmap-eval-workflow/main.nf\
                             -profile cluster\
                             --results_dir \$RESULTS_DIR\
@@ -261,7 +258,6 @@ if(params.scpred.run == "True"){
 
         """
         RESULTS_DIR=\$PWD
-	#pushd $EVAL_WORKFLOWS > dev/null #this is apparently  resume
         nextflow run $EVAL_WORKFLOWS/scpred-eval-workflow/main.nf\
                             -profile cluster\
                             --results_dir \$RESULTS_DIR\
@@ -330,7 +326,6 @@ if(params.label_analysis.run == "True"){
 
         """
         RESULTS_DIR=\$PWD 
-	#pushd $EVAL_WORKFLOWS > dev/null #this is apparently  resume
         nextflow run $EVAL_WORKFLOWS/label-analysis-eval-workflow/main.nf\
                             -profile cluster\
                             -resume\
