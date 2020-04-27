@@ -109,18 +109,14 @@ if(params.data_download.run == "True"){
     }
     
 }else{
-    REF_10X_DIR = Channel.fromPath(params.cv_ref_10x_dir).first()
-    QUERY_10X_DIR = Channel.fromPath(params.cv_query_10x_dir).first()
-    UNMELT_SDRF_REF = Channel.fromPath(params.cv_unmelt_sdrf_ref).first()
-    UNMELTED_SDRF_QUERY = Channel.fromPath(params.cv_unmelt_sdrf_query).first()
-    REF_MARKERS = Channel.fromPath(params.cv_ref_markers).first()
+if(params.cross_validation.run == "True"){
+   	REF_10X_DIR = Channel.fromPath(params.cross_validation.cv_ref_10x_dir).first()
+   	QUERY_10X_DIR = Channel.fromPath(params.cross_validation.cv_query_10x_dir).first()
+   	UNMELT_SDRF_REF = Channel.fromPath(params.cross_validation.cv_unmelt_sdrf_ref).first()
+   	UNMELTED_SDRF_QUERY = Channel.fromPath(params.cross_validation.cv_unmelt_sdrf_query).first()
+    	REF_MARKERS = Channel.fromPath(params.cross_validation.cv_ref_markers).first()
+	}
 }
-//REF_10X_DIR.view{ it } 
-//QUERY_10X_DIR.view{ it }
-//UNMELT_SDRF_REF.view{ it }
-//UNMELT_SDRF_QUERY.view{it}
-//REF_MARKERS.view{it}
-
 //run garnett 
 if(params.garnett.run == "True"){
     process run_garnett_workflow {
@@ -137,11 +133,11 @@ if(params.garnett.run == "True"){
             file(ref_marker_genes) from REF_MARKERS
 
         output:
-             file("garnett_output.txt") into GARNETT_OUTPUT
+             file("final_garnett_output.txt") into GARNETT_OUTPUT
 
         """
         RESULTS_DIR=\$PWD
-
+	#pushd $EVAL_WORKFLOWS > dev/null #this is apparently  resume
         nextflow run $EVAL_WORKFLOWS/garnett-eval-workflow/main.nf\
                             -profile cluster\
                             --results_dir \$RESULTS_DIR\
@@ -181,11 +177,11 @@ if(params.scmap_cell.run == "True"){
             file(ref_metadata) from UNMELT_SDRF_REF
 
         output: 
-            file("scmap-cell_output.txt") into SCMAP_CELL_OUTPUT
+            file("final_scmap-cell_output.txt") into SCMAP_CELL_OUTPUT
 
         """
         RESULTS_DIR=\$PWD    
-
+	#pushd $EVAL_WORKFLOWS > dev/null #this is apparently  resume
         nextflow run $EVAL_WORKFLOWS/scmap-eval-workflow/main.nf\
                             -profile cluster\
                             --results_dir \$RESULTS_DIR\
@@ -222,11 +218,11 @@ if(params.scmap_cluster.run == "True"){
             file(ref_metadata) from UNMELT_SDRF_REF
 
         output:
-            file("scmap-cluster_output.txt") into SCMAP_CLUST_OUTPUT
+            file("final_scmap-cluster_output.txt") into SCMAP_CLUST_OUTPUT
 
         """
         RESULTS_DIR=\$PWD
-
+	#pushd $EVAL_WORKFLOWS > dev/null #this is apparently  resume
         nextflow run $EVAL_WORKFLOWS/scmap-eval-workflow/main.nf\
                             -profile cluster\
                             --results_dir \$RESULTS_DIR\
@@ -262,11 +258,11 @@ if(params.scpred.run == "True"){
             file(ref_metadata) from UNMELT_SDRF_REF
 
         output:
-            file("scpred_output.txt") into SCPRED_OUTPUT
+            file("final_scpred_output.txt") into SCPRED_OUTPUT
 
         """
         RESULTS_DIR=\$PWD
-
+	#pushd $EVAL_WORKFLOWS > dev/null #this is apparently  resume
         nextflow run $EVAL_WORKFLOWS/scpred-eval-workflow/main.nf\
                             -profile cluster\
                             --results_dir \$RESULTS_DIR\
@@ -334,24 +330,29 @@ if(params.label_analysis.run == "True"){
             file("${params.label_analysis.tool_table_pvals}") into TOOL_TABLE_PVALS
 
         """
-        RESULTS_DIR="\$PWD" 
-
+        RESULTS_DIR=\$PWD 
+	#pushd $EVAL_WORKFLOWS > dev/null #this is apparently  resume
         nextflow run $EVAL_WORKFLOWS/label-analysis-eval-workflow/main.nf\
                             -profile cluster\
-                            --results_dir \$RESULTS_DIR\
+                            -resume\
+			    --results_dir \$RESULTS_DIR\
                             --input_dir ${tool_outputs_dir}\
-                            --ref_labels_file ${query_lab_file}\
-                            --tool_perf_table ${params.label_analysis.tool_perf_table}\
+                            --condensed_sdrf ${params.label_analysis.condensed_sdrf}\
+                            --parallel ${params.label_analysis.parallel}\
+                            --ontology_dict ${params.label_analysis.ontology_dict}\
+                            --ontology_graph ${params.label_analysis.ontology_graph}\
+			    --tool_perf_table ${params.label_analysis.tool_perf_table}\
                             --cell_anno_table ${params.label_analysis.cell_anno_table}\
                             --tool_table_pvals ${params.label_analysis.tool_table_pvals}\
+                            --ref_labels_file ${query_lab_file}\
+                            --empirical_dist ${params.label_analysis.empirical_dist}\
                             --num_iter ${params.label_analysis.num_iter}\
                             --num_cores ${params.label_analysis.num_cores}\
-                            --cell_ontology_col ${params.metadata.query_CL_col_name}\
-                            --barcode_col_ref ${params.metadata.query_barcode_col_name}\
-                            --label_column_ref ${params.metadata.query_label_col_name}\
-                            --semantic_sim_metric ${params.label_analysis.semantic_sim_metric}\
-                            --ontology_graph ${params.label_analysis.ontology_graph}\
-                            --empirical_dist ${params.label_analysis.empirical_dist}
+                            --cell_ontology_col ${params.label_analysis.cell_ontology_col}\
+                            --barcode_col_ref ${params.label_analysis.barcode_col_ref}\
+                            --barcode_col_pred ${params.label_analysis.barcode_col_pred}\
+                            --label_column_ref ${params.label_analysis.label_column_ref}\
+                            --semantic_sim_metric ${params.label_analysis.semantic_sim_metric}
         """
     }
 }
