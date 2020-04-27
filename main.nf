@@ -109,14 +109,13 @@ if(params.data_download.run == "True"){
     }
     
 }else{
-if(params.cross_validation.run == "True"){
-   	REF_10X_DIR = Channel.fromPath(params.cross_validation.cv_ref_10x_dir).first()
-   	QUERY_10X_DIR = Channel.fromPath(params.cross_validation.cv_query_10x_dir).first()
-   	UNMELT_SDRF_REF = Channel.fromPath(params.cross_validation.cv_unmelt_sdrf_ref).first()
-   	UNMELTED_SDRF_QUERY = Channel.fromPath(params.cross_validation.cv_unmelt_sdrf_query).first()
-    	REF_MARKERS = Channel.fromPath(params.cross_validation.cv_ref_markers).first()
-	}
+   	REF_10X_DIR = Channel.fromPath(params.input_data.ref_10x_dir).first()
+   	QUERY_10X_DIR = Channel.fromPath(params.input_data.query_10x_dir).first()
+   	UNMELT_SDRF_REF = Channel.fromPath(params.input_data.unmelt_sdrf_ref).first()
+   	UNMELTED_SDRF_QUERY = Channel.fromPath(params.input_data.unmelt_sdrf_query).first()
+    	REF_MARKERS = Channel.fromPath(params.input_data.ref_markers).first()
 }
+
 //run garnett 
 if(params.garnett.run == "True"){
     process run_garnett_workflow {
