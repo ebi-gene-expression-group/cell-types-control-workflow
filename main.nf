@@ -107,9 +107,16 @@ if(params.data_download.run == "True"){
                 --has-ontology                 
         """
     }
+    
+}else{
+   	REF_10X_DIR = Channel.fromPath(params.input_data.ref_10x_dir).first()
+   	QUERY_10X_DIR = Channel.fromPath(params.input_data.query_10x_dir).first()
+   	UNMELT_SDRF_REF = Channel.fromPath(params.input_data.unmelt_sdrf_ref).first()
+   	UNMELTED_SDRF_QUERY = Channel.fromPath(params.input_data.unmelt_sdrf_query).first()
+    	REF_MARKERS = Channel.fromPath(params.input_data.ref_markers).first()
 }
 
-// run garnett 
+//run garnett 
 if(params.garnett.run == "True"){
     process run_garnett_workflow {
         publishDir "${params.tool_outputs_dir}", mode: 'copy'
@@ -122,20 +129,19 @@ if(params.garnett.run == "True"){
         input:
             file(reference_10X_dir) from REF_10X_DIR
             file(query_10X_dir) from QUERY_10X_DIR
-            file(ref_marker_genes) from REF_MARKERS
+            file(ref_markers) from REF_MARKERS
 
         output:
-             file("garnett_output.txt") into GARNETT_OUTPUT
+             file("final_garnett_output.txt") into GARNETT_OUTPUT
 
         """
         RESULTS_DIR=\$PWD
-
         nextflow run $EVAL_WORKFLOWS/garnett-eval-workflow/main.nf\
                             -profile cluster\
                             --results_dir \$RESULTS_DIR\
                             --ref_10x_dir ${reference_10X_dir}\
                             --query_10x_dir ${query_10X_dir}\
-                            --marker_genes ${ref_marker_genes}\
+                            --marker_genes ${ref_markers}\
                             --pval-col ${params.garnett.pval_col}\
                             --groups-col ${params.garnett.groups_col}\
                             --gene-names ${params.garnett.gene_names}\
@@ -169,11 +175,10 @@ if(params.scmap_cell.run == "True"){
             file(ref_metadata) from UNMELT_SDRF_REF
 
         output: 
-            file("scmap-cell_output.txt") into SCMAP_CELL_OUTPUT
+            file("final_scmap-cell_output.txt") into SCMAP_CELL_OUTPUT
 
         """
         RESULTS_DIR=\$PWD    
-
         nextflow run $EVAL_WORKFLOWS/scmap-eval-workflow/main.nf\
                             -profile cluster\
                             --results_dir \$RESULTS_DIR\
@@ -210,11 +215,10 @@ if(params.scmap_cluster.run == "True"){
             file(ref_metadata) from UNMELT_SDRF_REF
 
         output:
-            file("scmap-cluster_output.txt") into SCMAP_CLUST_OUTPUT
+            file("final_scmap-cluster_output.txt") into SCMAP_CLUST_OUTPUT
 
         """
         RESULTS_DIR=\$PWD
-
         nextflow run $EVAL_WORKFLOWS/scmap-eval-workflow/main.nf\
                             -profile cluster\
                             --results_dir \$RESULTS_DIR\
@@ -250,11 +254,10 @@ if(params.scpred.run == "True"){
             file(ref_metadata) from UNMELT_SDRF_REF
 
         output:
-            file("scpred_output.txt") into SCPRED_OUTPUT
+            file("final_scpred_output.txt") into SCPRED_OUTPUT
 
         """
         RESULTS_DIR=\$PWD
-
         nextflow run $EVAL_WORKFLOWS/scpred-eval-workflow/main.nf\
                             -profile cluster\
                             --results_dir \$RESULTS_DIR\
@@ -307,8 +310,7 @@ process combine_results{
 if(params.label_analysis.run == "True"){
     process run_label_analysis {
         conda "${baseDir}/envs/nextflow.yaml"
-        publishDir "${params.label_analysis.output_dir}", mode: 'copy'
-
+        publishDir "${params.label_analysis_outdir}", mode: 'copy'
         errorStrategy { task.exitStatus == 130 || task.exitStatus == 137  ? 'retry' : 'finish' }   
         maxRetries 5
         memory { 16.GB * task.attempt }
@@ -324,23 +326,27 @@ if(params.label_analysis.run == "True"){
 
         """
         RESULTS_DIR=\$PWD 
-
         nextflow run $EVAL_WORKFLOWS/label-analysis-eval-workflow/main.nf\
                             -profile cluster\
-                            --results_dir \$RESULTS_DIR\
+                            -resume\
+			    --results_dir \$RESULTS_DIR\
                             --input_dir ${tool_outputs_dir}\
-                            --ref_labels_file ${query_lab_file}\
-                            --tool_perf_table ${params.label_analysis.tool_perf_table}\
+                            --condensed_sdrf ${params.label_analysis.condensed_sdrf}\
+                            --parallel ${params.label_analysis.parallel}\
+                            --ontology_dict ${params.label_analysis.ontology_dict}\
+                            --ontology_graph ${params.label_analysis.ontology_graph}\
+			    --tool_perf_table ${params.label_analysis.tool_perf_table}\
                             --cell_anno_table ${params.label_analysis.cell_anno_table}\
                             --tool_table_pvals ${params.label_analysis.tool_table_pvals}\
+                            --ref_labels_file ${query_lab_file}\
+                            --empirical_dist ${params.label_analysis.empirical_dist}\
                             --num_iter ${params.label_analysis.num_iter}\
                             --num_cores ${params.label_analysis.num_cores}\
-                            --cell_ontology_col ${params.metadata.query_CL_col_name}\
-                            --barcode_col_ref ${params.metadata.query_barcode_col_name}\
-                            --label_column_ref ${params.metadata.query_label_col_name}\
-                            --semantic_sim_metric ${params.label_analysis.semantic_sim_metric}\
-                            --ontology_graph ${params.label_analysis.ontology_graph}\
-                            --empirical_dist ${params.label_analysis.empirical_dist}
+                            --cell_ontology_col ${params.label_analysis.cell_ontology_col}\
+                            --barcode_col_ref ${params.label_analysis.barcode_col_ref}\
+                            --barcode_col_pred ${params.label_analysis.barcode_col_pred}\
+                            --label_column_ref ${params.label_analysis.label_column_ref}\
+                            --semantic_sim_metric ${params.label_analysis.semantic_sim_metric}
         """
     }
 }
