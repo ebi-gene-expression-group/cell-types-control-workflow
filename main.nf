@@ -109,11 +109,11 @@ if(params.data_download.run == "True"){
     }
     
 }else{
-   	REF_10X_DIR = Channel.fromPath(params.input_data.ref_10x_dir).first()
-   	QUERY_10X_DIR = Channel.fromPath(params.input_data.query_10x_dir).first()
-   	UNMELT_SDRF_REF = Channel.fromPath(params.input_data.unmelt_sdrf_ref).first()
-   	UNMELTED_SDRF_QUERY = Channel.fromPath(params.input_data.unmelt_sdrf_query).first()
-    	REF_MARKERS = Channel.fromPath(params.input_data.ref_markers).first()
+   	REF_10X_DIR = Channel.fromPath(params.ref_10x_dir).first()
+   	QUERY_10X_DIR = Channel.fromPath(params.query_10x_dir).first()
+   	UNMELT_SDRF_REF = Channel.fromPath(params.unmelt_sdrf_ref).first()
+   	UNMELTED_SDRF_QUERY = Channel.fromPath(params.unmelt_sdrf_query).first()
+    	REF_MARKERS = Channel.fromPath(params.ref_markers).first()
 }
 
 //run garnett 
