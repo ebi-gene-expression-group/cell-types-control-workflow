@@ -132,12 +132,12 @@ if(params.garnett.run == "True"){
             file(ref_markers) from REF_MARKERS
 
         output:
-             file("final_garnett_output.txt") into GARNETT_OUTPUT
+             file("garnett_output.txt") into GARNETT_OUTPUT
 
         """
         RESULTS_DIR=\$PWD
         nextflow run $EVAL_WORKFLOWS/garnett-eval-workflow/main.nf\
-                            -profile cluster\
+                            -profile ${params.profile}\
                             --results_dir \$RESULTS_DIR\
                             --ref_10x_dir ${reference_10X_dir}\
                             --query_10x_dir ${query_10X_dir}\
@@ -175,12 +175,12 @@ if(params.scmap_cell.run == "True"){
             file(ref_metadata) from UNMELT_SDRF_REF
 
         output: 
-            file("final_scmap-cell_output.txt") into SCMAP_CELL_OUTPUT
+            file("scmap-cell_output.txt") into SCMAP_CELL_OUTPUT
 
         """
         RESULTS_DIR=\$PWD    
         nextflow run $EVAL_WORKFLOWS/scmap-eval-workflow/main.nf\
-                            -profile cluster\
+                            -profile ${params.profile}\
                             --results_dir \$RESULTS_DIR\
                             --projection_method ${params.scmap_cell.projection_method}\
                             --query_10x_dir ${query_10X_dir}\
@@ -215,12 +215,12 @@ if(params.scmap_cluster.run == "True"){
             file(ref_metadata) from UNMELT_SDRF_REF
 
         output:
-            file("final_scmap-cluster_output.txt") into SCMAP_CLUST_OUTPUT
+            file("scmap-cluster_output.txt") into SCMAP_CLUST_OUTPUT
 
         """
         RESULTS_DIR=\$PWD
         nextflow run $EVAL_WORKFLOWS/scmap-eval-workflow/main.nf\
-                            -profile cluster\
+                            -profile ${params.profile}\
                             --results_dir \$RESULTS_DIR\
                             --projection_method ${params.scmap_cluster.projection_method}\
                             --query_10x_dir ${query_10X_dir}\
@@ -254,12 +254,12 @@ if(params.scpred.run == "True"){
             file(ref_metadata) from UNMELT_SDRF_REF
 
         output:
-            file("final_scpred_output.txt") into SCPRED_OUTPUT
+            file("scpred_output.txt") into SCPRED_OUTPUT
 
         """
         RESULTS_DIR=\$PWD
         nextflow run $EVAL_WORKFLOWS/scpred-eval-workflow/main.nf\
-                            -profile cluster\
+                            -profile ${params.profile}\
                             --results_dir \$RESULTS_DIR\
                             --method ${params.scpred.method}\
                             -latest\
@@ -328,11 +328,10 @@ if(params.label_analysis.run == "True"){
         RESULTS_DIR=\$PWD 
         nextflow run $EVAL_WORKFLOWS/label-analysis-eval-workflow/main.nf\
                             -profile cluster\
-                            -resume\
 			    --results_dir \$RESULTS_DIR\
                             --input_dir ${tool_outputs_dir}\
                             --condensed_sdrf ${params.label_analysis.condensed_sdrf}\
-                            --parallel ${params.label_analysis.parallel}\
+		   	    --parallel ${params.label_analysis.parallel}\
                             --ontology_dict ${params.label_analysis.ontology_dict}\
                             --ontology_graph ${params.label_analysis.ontology_graph}\
 			    --tool_perf_table ${params.label_analysis.tool_perf_table}\
@@ -342,10 +341,10 @@ if(params.label_analysis.run == "True"){
                             --empirical_dist ${params.label_analysis.empirical_dist}\
                             --num_iter ${params.label_analysis.num_iter}\
                             --num_cores ${params.label_analysis.num_cores}\
-                            --cell_ontology_col ${params.label_analysis.cell_ontology_col}\
+                            --cell_ontology_col ${params.metadata.ref_CL_col_name}\
                             --barcode_col_ref ${params.label_analysis.barcode_col_ref}\
                             --barcode_col_pred ${params.label_analysis.barcode_col_pred}\
-                            --label_column_ref ${params.label_analysis.label_column_ref}\
+                            --label_column_ref ${params.metadata.ref_label_col_name}\
                             --semantic_sim_metric ${params.label_analysis.semantic_sim_metric}
         """
     }
