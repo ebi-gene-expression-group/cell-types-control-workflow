@@ -1,7 +1,6 @@
 #!/usr/bin/env nextflow 
 
-// Meta-workflow that controls execution of steps in cell type 
-// prediction tools evaluation framework
+// Meta-workflow that controls execution of steps in cell type prediction tools evaluation framework
 
 // download data
 if(params.data_import.run == "True"){
@@ -94,7 +93,7 @@ if(params.data_import.unmelt_sdrf.run == "True"){
 	GARNETT_FULL_DATA = GARNETT_DATA.merge(N_CLUST)
 
 }else{
-	// manual data input (Cross-Validation)
+	// parent cross-validation data input 
 	
 	MANUAL_INPUT_DATA = Channel.fromPath("${params.input_data}/*")
 	BARCODE_COL = Channel.from(params.metadata.query_barcode_col_name).first()
@@ -105,7 +104,7 @@ if(params.data_import.unmelt_sdrf.run == "True"){
 	//group by matrix type
 	ZIP_FILES.groupTuple(by:[1, 2]).map{it -> tuple(it[0][0], it[0][1], it[1], it[2]) }.set{GROUPED_DATA}
 	
-	// unzip CV data
+	// unzip cross-validation data
 	process unzip_data {
 	
 	input: 
