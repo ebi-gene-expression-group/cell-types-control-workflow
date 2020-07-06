@@ -6,12 +6,6 @@
 // download data
 if(params.data_import.run == "True"){
 
-	// initialise required channels 
-	DATASET_IDS = Channel.create()
-	NUM_CLUST = Channel.create()
-	BARCODE_COLUMN = Channel.create()
-	CELL_LABEL_COLUMN = Channel.create()
-	
 	// extract matrix types required by the tools, conditioned on them being 'on' 
 	tool_switch = ["True":0, "False":1]
 	garnett_matrix_type = [params.garnett.matrix_type, null][tool_switch[params.garnett.run]]
