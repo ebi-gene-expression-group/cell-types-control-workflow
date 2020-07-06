@@ -19,8 +19,8 @@ if(params.data_import.run == "True"){
 	scmap_cell_matrix_type = [params.scmap_cell.matrix_type, null][tool_switch[params.scmap_cell.run]]
 	scpred_matrix_type = [params.scpred.matrix_type, null][tool_switch[params.scpred.run]]
 	
-	UNIQUE_MATRIX_TYPES = Channel
-	                    .of(garnett_matrix_type,
+	UNIQUE_MATRIX_TYPES = Channel.of(
+				garnett_matrix_type,
 	                        scmap_cluster_matrix_type,
 	                        scmap_cell_matrix_type,
 	                        scpred_matrix_type)
@@ -102,7 +102,7 @@ if(params.data_import.unmelt_sdrf.run == "True"){
 }else{
 	// manual data input (Cross-Validation)
 	
-	MANUAL_INPUT_DATA = Channel.fromPath("${params.input_data}/*.zip")
+	MANUAL_INPUT_DATA = Channel.fromPath("${params.input_data}/*")
 	BARCODE_COL = Channel.from(params.metadata.query_barcode_col_name).first()
 	CELL_LABEL_COL = Channel.from(params.metadata.query_label_col_name).first()
 
