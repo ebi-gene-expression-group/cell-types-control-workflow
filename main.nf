@@ -93,7 +93,7 @@ if(params.data_import.unmelt_sdrf.run == "True"){
 	GARNETT_FULL_DATA = GARNETT_DATA.merge(N_CLUST)
 
 }else{
-	// parent cross-validation data input 
+	// cross-validation data input from parent workflow 
 	
 	MANUAL_INPUT_DATA = Channel.fromPath("${params.input_data}/*")
 	BARCODE_COL = Channel.from(params.metadata.query_barcode_col_name).first()
@@ -101,7 +101,7 @@ if(params.data_import.unmelt_sdrf.run == "True"){
 
 	// add dataset id and matrix type to tuple	
 	MANUAL_INPUT_DATA.map{it -> tuple(it, it.getBaseName().toString().split('\\.')[0], it.getBaseName().toString().split('\\.')[2] ) }.set{ZIP_FILES}
-	//group by matrix type
+	//group by matrix type (and dataset id)
 	ZIP_FILES.groupTuple(by:[1, 2]).map{it -> tuple(it[0][0], it[0][1], it[1], it[2]) }.set{GROUPED_DATA}
 	
 	// unzip cross-validation data
@@ -118,14 +118,13 @@ if(params.data_import.unmelt_sdrf.run == "True"){
 	file("*.test.*/unmelted_sdrf.tsv") into UNMELTED_SDRF_QUERY
 	"""
 	# unzip test 
-	test_zipdir=\$(unzip -qql $test_zip | head -n1 | tr -s ' ' | cut -d' ' -f5- | sed 's|/.*||')
 	unzip $test_zip
 	# unzip train 
 	unzip $train_zip
 	"""
 	}
 	
-	// extract marker's number of clusters value	
+	// extract marker's number of clusters value // won't be needed when markers with inferred cell types are present	
 	MARKERS.map{it -> it.getBaseName().toString().split('\\_')[2] }.first().set{N_CLUST}
 
 	// send data to different tool's channel 
